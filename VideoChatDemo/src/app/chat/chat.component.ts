@@ -45,4 +45,12 @@ export class ChatComponent implements AfterViewInit {
     });
     this.localVideo.nativeElement.srcObject = undefined;
   }
+
+  startLocalVideo() {
+    console.log('starting local stream');
+    this.localStream.getTracks().forEach(track => {
+      track.enabled = true;
+    });
+    this.localVideo.nativeElement.srcObject = this.localStream;
+  }
 }
