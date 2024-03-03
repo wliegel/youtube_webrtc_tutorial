@@ -55,4 +55,4 @@ It's also required to setup a valid certificate and private key for TLS encrypti
 
 ## Questions
 
-If you need further support, please contact me on http://openvalue.de/
+If you need further support, please contact me on http://opstream.de/
