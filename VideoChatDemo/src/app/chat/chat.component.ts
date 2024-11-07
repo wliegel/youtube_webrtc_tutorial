@@ -1,13 +1,16 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import {environment} from '../../environments/environment';
-import {DataService} from './service/data.service';
-import {Message} from './types/message';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { DataService } from './service/data.service';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { Message } from './types/message';
+import { environment } from '../../environments/environment';
+import { MatButton } from '@angular/material/button';
 
-export const ENV_RTCPeerConfiguration = environment.RTCPeerConfiguration;
+
 
 const mediaConstraints = {
   audio: true,
-  video: {width: 1280, height: 720}
+  video: true
+  // video: {width: 1280, height: 720}
   // video: {width: 1280, height: 720} // 16:9
   // video: {width: 960, height: 540}  // 16:9
   // video: {width: 640, height: 480}  //  4:3
@@ -21,17 +24,19 @@ const offerOptions = {
 
 @Component({
   selector: 'app-chat',
+  standalone: true,
+  imports: [MatGridList, MatGridTile, MatButton],
+  providers: [DataService],
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrl: './chat.component.css'
 })
 export class ChatComponent implements AfterViewInit {
+  @ViewChild('local_video') localVideo!: ElementRef;
+  @ViewChild('received_video') remoteVideo!: ElementRef;
 
-  @ViewChild('local_video') localVideo: ElementRef;
-  @ViewChild('received_video') remoteVideo: ElementRef;
+  private peerConnection!: RTCPeerConnection;
 
-  private peerConnection: RTCPeerConnection;
-
-  private localStream: MediaStream;
+  private localStream!: MediaStream;
 
   inCall = false;
   localVideoActive = false;
@@ -55,7 +60,7 @@ export class ChatComponent implements AfterViewInit {
       this.inCall = true;
 
       this.dataService.sendMessage({type: 'offer', data: offer});
-    } catch (err) {
+    } catch (err: any) {
       this.handleGetUserMediaError(err);
     }
   }
@@ -158,10 +163,11 @@ export class ChatComponent implements AfterViewInit {
 
   private async requestMediaDevices(): Promise<void> {
     try {
+      // navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
       this.localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
       // pause all tracks
       this.pauseLocalVideo();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       alert(`getUserMedia() error: ${e.name}`);
     }
@@ -189,7 +195,7 @@ export class ChatComponent implements AfterViewInit {
 
   private createPeerConnection(): void {
     console.log('creating PeerConnection...');
-    this.peerConnection = new RTCPeerConnection(ENV_RTCPeerConfiguration);
+    this.peerConnection = new RTCPeerConnection(environment.RTCPeerConfiguration);
 
     this.peerConnection.onicecandidate = this.handleICECandidateEvent;
     this.peerConnection.oniceconnectionstatechange = this.handleICEConnectionStateChangeEvent;
@@ -215,7 +221,6 @@ export class ChatComponent implements AfterViewInit {
 
       // Close the peer connection
       this.peerConnection.close();
-      this.peerConnection = null;
 
       this.inCall = false;
     }
