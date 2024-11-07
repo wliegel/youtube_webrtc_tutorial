@@ -11,7 +11,7 @@ export const WS_ENDPOINT = environment.wsEndpoint;   // wsEndpoint: 'ws://localh
 })
 export class DataService {
 
-  private socket$: WebSocketSubject<any>;
+  private socket$!: WebSocketSubject<any>;
 
   private messagesSubject = new Subject<Message>();
   public messages$ = this.messagesSubject.asObservable();
@@ -54,7 +54,7 @@ export class DataService {
       closeObserver: {
         next: () => {
           console.log('[DataService]: connection closed');
-          this.socket$ = undefined;
+          this.socket$.next(null);
           this.connect();
         }
       }

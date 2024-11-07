@@ -9,6 +9,8 @@
 
 # dependencies
 /node_modules
+npm-debug.log
+yarn-error.log
 
 # profiling files
 chrome-profiler-events*.json
@@ -31,6 +33,9 @@ chrome-profiler-events*.json
 .history/*
 
 # misc
+.angular
+.angular/cache
+.cache
 /.sass-cache
 /connect.lock
 /coverage
